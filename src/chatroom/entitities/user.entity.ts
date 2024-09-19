@@ -1,0 +1,10 @@
+import { IsString } from 'class-validator';
+
+export class User {
+  @IsString()
+  readonly id: string;
+  @IsString()
+  readonly name: string;
+  @IsString()
+  readonly email: string;
+}

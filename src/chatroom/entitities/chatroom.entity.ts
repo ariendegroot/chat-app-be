@@ -8,8 +8,8 @@ export class Chatroom {
   id: number;
   @Column()
   name: string;
-  @Column('json')
+  @Column('jsonb', { nullable: true })
   users: User[];
-  @Column('json', { nullable: true })
+  @Column('jsonb', { nullable: true })
   messages: Message[];
 }

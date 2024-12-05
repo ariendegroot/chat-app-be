@@ -1,4 +1,8 @@
+import { User } from "src/chatroom/entitities/user.entity";
+
 export class AddMessageDto {
-  author: string;
+  author: User;
   body: string;
+  time: string;
+  id: string;
 }

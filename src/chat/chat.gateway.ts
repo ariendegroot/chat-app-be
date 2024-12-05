@@ -10,19 +10,31 @@ import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
 import { AddMessageDto } from './dto/add-message.dto';
+import { ChatroomService } from 'src/chatroom/chatroom.service';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  constructor(private readonly chatroomService: ChatroomService) {}
   @WebSocketServer()
   server: Server;
 
   private logger = new Logger('ChatGateway');
 
   @SubscribeMessage('chat')
-  handleMessage(@MessageBody() payload: AddMessageDto): AddMessageDto {
-    this.logger.log(`Message received: ${payload.author} - ${payload.body}`);
+  async handleMessage(
+    @MessageBody() payload: AddMessageDto,
+  ): Promise<AddMessageDto> {
+    const message = {
+      message: payload.body,
+      user: payload.author,
+      time: payload.time,
+    };
 
-    this.server.emit('chat', payload);
+    this.logger.log(
+      `Message received: ${JSON.stringify(payload.author)} - ${payload.body} - ${payload.time} - ${payload.id}`,
+    );
+    await this.chatroomService.addMessage(payload.id, message);
+    await this.server.emit('chat', { message: message, id: payload.id });
     return payload;
   }
 
